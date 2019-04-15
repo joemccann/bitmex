@@ -1,7 +1,7 @@
 const fetch = require('node-fetch')
 const crypto = require('crypto')
 const qs = require('qs')
-
+const debug = require('debug')('bitmex:client')
 class Bitmex {
   constructor (opts = {}) {
     this.BASE_URL = `https://www.bitmex.com`
@@ -11,10 +11,10 @@ class Bitmex {
     this.EXPIRES = opts.expires || Math.round(Date.now() / 1000) + 60
   }
 
-  async responseHandler (response) {
+  async responseHandler (response = {}) {
     if (!response.ok) {
       return {
-        err: response.statusText
+        err: response.statusText || 'No response object.'
       }
     }
     const data = await response.json()
@@ -26,7 +26,7 @@ class Bitmex {
     return { data }
   }
 
-  async request (params) {
+  async request (params = {}) {
     let {
       body = '',
       endpoint = null,
@@ -67,7 +67,8 @@ class Bitmex {
 
     const url = this.BASE_URL + this.API_VERSION + endpoint + query
 
-    console.log(url)
+    debug(url)
+
     try {
       const response = await fetch(url, options)
       return await this.responseHandler(response)
@@ -79,7 +80,7 @@ class Bitmex {
   //
   // Sugar for getting the price of an asset, index or futures contract.
   //
-  async price (asset) {
+  async price (asset = '') {
     if (!asset) return { err: `Price requires an asset.` }
 
     const opts = {
@@ -108,7 +109,7 @@ class Bitmex {
   //
   // Sugar for getting the order book of an asset, index or futures contract.
   //
-  async book (asset) {
+  async book (asset = '') {
     if (!asset) return { err: `Price requires an asset.` }
 
     const opts = {
@@ -139,6 +140,62 @@ class Bitmex {
         return { data: { bids, offers, spread } }
       } catch (err) {
         return { err: err.message || err }
+      }
+    }
+  }
+
+  //
+  // Sugar for getting all active instruments & indices with filtering options.
+  //
+  async instruments (opts = {}) {
+    const {
+      filter = null,
+      instrument = '',
+      raw = false
+    } = opts
+
+    opts.endpoint = 'instrument/activeAndIndices'
+
+    const { err, data } = await this.request(opts)
+    if (err) return { err }
+    else {
+      if (raw) return { data }
+      if (filter) {
+        //
+        // A filter can be something like "LTC" and will return all
+        // instruments that begin with the string "LTC"
+        //
+        debug(`filter`, filter)
+
+        const filtered = data.filter(inst => {
+          if (inst.symbol.startsWith(filter)) return inst
+        })
+        return { data: filtered }
+      }
+      if (instrument) {
+        //
+        // Return the data for a specific instrument
+        //
+
+        debug(`instrument`, instrument)
+
+        try {
+          const found = data.find(inst => {
+            if (inst.symbol === instrument) return inst
+          })
+          return { data: found }
+        } catch (err) {
+          return { err: err.message || err }
+        }
+      } else {
+        //
+        // Return a list of all instruments
+        //
+        const instruments = []
+        data.forEach(inst => {
+          instruments.push(inst.symbol)
+        })
+        return { data: instruments.sort() }
       }
     }
   }

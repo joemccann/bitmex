@@ -23,6 +23,7 @@
     "qs": "^6.7.0"
   },
   "devDependencies": {
+    "debug": "^4.1.1",
     "standard": "^12.0.1",
     "tape": "^4.10.1"
   }

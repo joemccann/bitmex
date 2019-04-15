@@ -68,14 +68,25 @@ const { err, data } = await bitmex.price('XBTUSD')
 // spread is the delta between the top bid and top offer as float
 // an order book object is from Bitmex: { symbol, id, side, size, price }
 //
-const { err, data } = await bitmex.price('XBTUSD')
+const { err, data } = await bitmex.book('XBTUSD')
 ```
+
+```js
+//
+// Returns 'data' as an array of strings of active instruments and indices
+// The 'data' object may be different based on the parameters passed in.
+// Refer to the source code in `index.js` for more details or check the 
+// test cases in the `test.js` file.
+//
+const { err, data } = await bitmex.instruments({filter, instrument, raw})
+```
+
 
 ## TESTS
 
 ```sh
 npm i -D
-API_KEY={YOUR-API-KEY} API_SECRET={YOUR-API-SECRET} npm test
+API_KEY={YOUR-API-KEY} API_SECRET={YOUR-API-SECRET} DEBUG=bitmex:client npm test
 ```
 
 ## AUTHORS

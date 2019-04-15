@@ -23,14 +23,59 @@ test('pass - API Key and Secret exists', t => {
   t.end()
 })
 
-test('pass - price', async t => {
-  const { err, data } = await bitmex.price('.BXBT')
-  console.log(data)
+test('pass - instruments, default', async t => {
+  const { err, data } = await bitmex.instruments()
+  t.ok(!err)
+  t.ok(data)
+  t.true(Array.isArray(data))
+  t.true(data.length)
+  t.end()
+})
+
+test('pass - instruments, filter by XBT', async t => {
+  const { err, data } = await bitmex.instruments({
+    filter: 'XBT'
+  })
+  t.true(Array.isArray(data))
+  t.equals(data.length, 5)
   t.ok(!err)
   t.ok(data)
   t.end()
 })
-/*
+
+test('pass - instruments, exact instrument XBTU19', async t => {
+  const { err, data } = await bitmex.instruments({
+    instrument: 'XBTU19'
+  })
+  t.ok(!err)
+  t.ok(data)
+  t.end()
+})
+
+test('pass - instruments, raw', async t => {
+  const { err, data } = await bitmex.instruments({
+    raw: true
+  })
+  t.ok(!err)
+  t.ok(data)
+  t.true(Array.isArray(data))
+  t.true(data.length)
+  t.end()
+})
+
+test('pass - price, .BXBT', async t => {
+  const { err, data } = await bitmex.price('.BXBT')
+  t.ok(!err)
+  t.ok(data)
+  t.end()
+})
+
+test('pass - price, XBTUSD', async t => {
+  const { err, data } = await bitmex.price('XBTUSD')
+  t.ok(!err)
+  t.ok(data)
+  t.end()
+})
 
 test('fail - price', async t => {
   const { err, data } = await bitmex.price('ZYABC')
@@ -116,4 +161,3 @@ test('fail - quote (is deprecated)', async t => {
   t.equals(err, 'Forbidden')
   t.end()
 })
-*/
