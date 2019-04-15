@@ -1,6 +1,6 @@
 # SYNOPSIS
 
-🛠 Opinionated Bitmex client.
+🛠 Opinionated, Async/Await optimized Bitmex client.
 
 ## USAGE
 
@@ -12,9 +12,17 @@ Then, in your Node.js app:
 
 ```js
 const Bitmex = require('bitmex')
-const bitmex = new Bitmex() // Public client only
 
-const { err, data } = await bitmex.request({endpoint: 'funding'})
+const { env: {
+  API_KEY,
+  API_SECRET
+} } = process
+
+const bitmex = new Bitmex({API_KEY, API_SECRET})
+
+const { err, data } = await bitmex.request({
+  endpoint: 'funding'
+})
 
 if(err) return { err }
 
@@ -28,9 +36,9 @@ All requests adhere to following pattern:
 ```js
 const params = {
   body: {
-    symbol,
+    columns,
     filter,
-    columns
+    symbol
   },
   endpoint,
   verb
@@ -40,6 +48,28 @@ const { err, data } = await bitmex.requres(params)
 ```
 
 Refer to the [Bitmex API](https://www.bitmex.com/api/explorer/) for various endpoints, filters, symbols and columns.
+
+## 🍭 SYNTACTIC SUGAR
+
+Some simplified methods for common requests:
+
+```js
+//
+// Returns 'data' as the current price of the asset as a float
+//
+const { err, data } = await bitmex.price('XBTUSD')
+```
+
+```js
+//
+// Returns 'data' as an object of { bids, offers, spread }
+// bids is an array of order book objects w/index zero being the highest bid
+// offers is an array of order book objects w/index zero being the lowest offer
+// spread is the delta between the top bid and top offer as float
+// an order book object is from Bitmex: { symbol, id, side, size, price }
+//
+const { err, data } = await bitmex.price('XBTUSD')
+```
 
 ## TESTS
 

@@ -23,6 +23,38 @@ test('pass - API Key and Secret exists', t => {
   t.end()
 })
 
+test('pass - price', async t => {
+  const { err, data } = await bitmex.price('XBTUSD')
+  t.ok(!err)
+  t.ok(data)
+  t.end()
+})
+
+test('fail - price', async t => {
+  const { err, data } = await bitmex.price('ZYABC')
+  t.ok(err)
+  t.ok(!data)
+  t.end()
+})
+
+test('pass - book', async t => {
+  const { err, data } = await bitmex.book('XBTUSD')
+  t.ok(!err)
+  t.ok(data)
+  t.true(Array.isArray(data.bids))
+  t.true(Array.isArray(data.offers))
+  t.true(data.spread > 0) // spread can never be 0
+  t.end()
+})
+
+test('fail - book', async t => {
+  const { err, data } = await bitmex.book('ZYABC')
+  t.ok(err)
+  t.ok(!data)
+  t.equal(err, `No results for ZYABC.`)
+  t.end()
+})
+
 const endpoints = ['funding', 'instrument', 'orderBook/L2', 'quote']
 
 test('pass - funding', async t => {

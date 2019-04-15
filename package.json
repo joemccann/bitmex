@@ -1,7 +1,7 @@
 {
   "name": "bitmex",
   "version": "1.1.0",
-  "description": "🛠 Opinionated Bitmex client.",
+  "description": "🛠 Opinionated, Async/Await optimized Bitmex client.",
   "main": "index.js",
   "scripts": {
     "pretest": "standard",

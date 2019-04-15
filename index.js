@@ -74,6 +74,71 @@ class Bitmex {
       return { err: err.message || err }
     }
   }
+
+  //
+  // Sugar for getting the price of an asset, index or futures contract.
+  //
+  async price (asset) {
+    if (!asset) return { err: `Price requires an asset.` }
+
+    const opts = {
+      body: {
+        symbol: asset
+      },
+      endpoint: 'orderBook/L2'
+    }
+    const { err, data } = await this.request(opts)
+    if (err) return { err }
+    else {
+      if ((data && Array.isArray(data)) && !data.length) {
+        return { err: `No results for ${asset}.` }
+      }
+      try {
+        const price = data[0]['price']
+        return { data: price }
+      } catch (err) {
+        return { err: err.message || err }
+      }
+    }
+  }
+
+  //
+  // Sugar for getting the order book of an asset, index or futures contract.
+  //
+  async book (asset) {
+    if (!asset) return { err: `Price requires an asset.` }
+
+    const opts = {
+      body: {
+        symbol: asset
+      },
+      endpoint: 'orderBook/L2'
+    }
+    const { err, data } = await this.request(opts)
+    if (err) return { err }
+    else {
+      if ((data && Array.isArray(data)) && !data.length) {
+        return { err: `No results for ${asset}.` }
+      }
+
+      const bids = []
+      let offers = []
+
+      data.forEach(entry => {
+        if (entry.side === 'Sell') offers.push(entry)
+        else bids.push(entry)
+      })
+
+      offers = offers.reverse() // Reverse to put top offer at index 0
+
+      try {
+        const spread = offers[0].price - bids[0].price
+        return { data: { bids, offers, spread } }
+      } catch (err) {
+        return { err: err.message || err }
+      }
+    }
+  }
 }
 
 module.exports = Bitmex
