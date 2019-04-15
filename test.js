@@ -24,11 +24,13 @@ test('pass - API Key and Secret exists', t => {
 })
 
 test('pass - price', async t => {
-  const { err, data } = await bitmex.price('XBTUSD')
+  const { err, data } = await bitmex.price('.BXBT')
+  console.log(data)
   t.ok(!err)
   t.ok(data)
   t.end()
 })
+/*
 
 test('fail - price', async t => {
   const { err, data } = await bitmex.price('ZYABC')
@@ -114,3 +116,4 @@ test('fail - quote (is deprecated)', async t => {
   t.equals(err, 'Forbidden')
   t.end()
 })
+*/

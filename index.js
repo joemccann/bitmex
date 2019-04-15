@@ -67,6 +67,7 @@ class Bitmex {
 
     const url = this.BASE_URL + this.API_VERSION + endpoint + query
 
+    console.log(url)
     try {
       const response = await fetch(url, options)
       return await this.responseHandler(response)
@@ -83,9 +84,11 @@ class Bitmex {
 
     const opts = {
       body: {
-        symbol: asset
+        symbol: asset,
+        reverse: true,
+        colums: 'price'
       },
-      endpoint: 'orderBook/L2'
+      endpoint: 'trade'
     }
     const { err, data } = await this.request(opts)
     if (err) return { err }

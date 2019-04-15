@@ -18,7 +18,7 @@ const { env: {
   API_SECRET
 } } = process
 
-const bitmex = new Bitmex({API_KEY, API_SECRET})
+const bitmex = new Bitmex({ API_KEY, API_SECRET })
 
 const { err, data } = await bitmex.request({
   endpoint: 'funding'
