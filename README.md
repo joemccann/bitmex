@@ -14,7 +14,7 @@ Then, in your Node.js app:
 const Bitmex = require('bitmex')
 const bitmex = new Bitmex() // Public client only
 
-const { err, data } = await bitmex.requres({endpoint: 'funding'})
+const { err, data } = await bitmex.request({endpoint: 'funding'})
 
 if(err) return { err }
 
