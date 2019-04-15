@@ -45,7 +45,7 @@ Refer to the [Bitmex API](https://www.bitmex.com/api/explorer/) for various endp
 
 ```sh
 npm i -D
-npm test
+API_KEY={YOUR-API-KEY} API_SECRET={YOUR-API-SECRET} npm test
 ```
 
 ## AUTHORS
